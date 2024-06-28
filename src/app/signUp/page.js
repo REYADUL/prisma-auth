@@ -1,25 +1,25 @@
 'use client';
 import { useState } from 'react';
 import Head from 'next/head';
-// import { userAgent } from 'next/server';
-// import { objectEnumValues } from '@prisma/client/runtime/library';
-import { useRouter } from 'next/router'; 
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function SignUp() {
     // const router = useRouter();
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phone,setPhone] = useState('');
-    const submitForm = async() => {
+    const submitForm = async(e) => {
       e.preventDefault();
       const newUser = {
         email,
         phone,
         password
       }
-      console.log(newUser);
+      // console.log(newUser);
       try{
-        const response = await fetch('api/user',{
+        const response = await fetch('http://localhost:3000/api/user',{
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -27,7 +27,7 @@ export default function SignUp() {
           body: JSON.stringify(newUser)
         })
         if(response.ok){
-          console.log('ok resoponed');
+          router.push('/signIn');
         }
         else{
           console.log('Registration failed');
@@ -50,9 +50,9 @@ export default function SignUp() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
-            <a href="/signIn" className="font-medium text-indigo-600 hover:text-indigo-500">
+            <Link href="/signIn" className="font-medium text-indigo-600 hover:text-indigo-500">
               sign in to your existing account
-            </a>
+            </Link>
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={submitForm} method="POST">

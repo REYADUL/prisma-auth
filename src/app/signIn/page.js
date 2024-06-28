@@ -1,10 +1,33 @@
-// pages/signin.js
-import React from "react";
+'use client'
+import React, { useState } from "react";
 import Head from 'next/head';
+import signIn from 'next-auth/react';
+import { useRouter } from "next/navigation";
+import Credentials from "next-auth/providers/credentials";
 
 export default function SignIn() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onSubmit = async(e)=>{
+    e.preventDefault(); 
+    // const router = useRouter();
+    const signInData = await signIn('credentials',{
+      email: email,
+      password: password,
+      redirect: false
+    });
+    console.log(signInData);
+    if(signInData?.error){
+      console.log(signInData.error);
+    }
+    else{
+      // router.push('/about');
+      console.log('ok');
+    }
+  }
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" >
       <Head>
         <title>Sign In</title>
       </Head>
@@ -20,7 +43,7 @@ export default function SignIn() {
             </a>
           </p> */}
         </div>
-        <form className="mt-8 space-y-6" action="#" method="POST">
+        <form className="mt-8 space-y-6"onSubmit={onSubmit}>
           <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -35,6 +58,8 @@ export default function SignIn() {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
@@ -49,11 +74,13 @@ export default function SignIn() {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
                 id="remember-me"
@@ -71,7 +98,7 @@ export default function SignIn() {
                 Forgot your password?
               </a>
             </div>
-          </div>
+          </div> */}
 
           <div>
             <button

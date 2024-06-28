@@ -1,53 +1,56 @@
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials"
-import { userModel } from "./db/models/users.model";
-import bcrypt from "bcryptjs"
-import mongoClientPromise from "./db/mongoClientPromise";
+import nextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import db from "@/utils/db";
+import { compare } from "bcrypt";
 
+const handler = nextAuth(authOptions);
 
-export const {
-    handlers: { GET, POST },
-    auth,
-    signIn,
-    signOut,
-} = NextAuth({
-    adapter: MongoDBAdapter(mongoClientPromise, { databaseName: "lws-kart" }),
+export const authOptions ={
+    adapter: PrismaAdapter(db),
     session: {
-        strategy: 'jwt',
+      strategy: 'jwt'
     },
-    trustHost: true,
-    trustHostedDomain: true,
+    pages: {
+        signIn: '/signIn',
+    },
     providers: [
-        Credentials({
+        CredentialsProvider({            
+            name: "Credentials",          
             credentials: {
-                email: {},
-                password: {},
+              email: { label: "Email", type: "text", placeholder: "jsmith" },
+              password: { label: "Password", type: "password" }
             },
             async authorize(credentials) {
-                if (credentials == null) {
-                    return null
-                }
-                try {
-                    const user = await userModel.findOne({ email: credentials.email })
-                    if (user) {
-                        const isMatch = await bcrypt.compare(credentials.password, user.password)
-                        if (isMatch) {
-                            return user
-                        }
-                        else {
-                            throw new Error("invalid password")
-                        }
-                    }
-                    else {
-                        throw new Error("user not found")
-                    }
-                } catch (error) {
-                    throw new Error(error)
-                }
+              if(!credentials?.email || !credentials?.password){
+                return null;
+              }
+              
+              const existingUser = await db.user.findUnique({
+                where:{email: credentials?.email}
+              });
+              if(!existingUser){
+                return null;
+              }
 
-            }
+              const passwordMatch = await compare(credentials.password,existingUser.password)
 
-        }),
+              if(!passwordMatch){
+                return null;
+              }
+              return {
+                id: existingUser.id,
+                username: existingUser.email,
+              }
         
+              if (user) {
+                // Any object returned will be saved in `user` property of the JWT
+                return user
+              } else {
+                
+                return null
+              }
+            }
+          })
     ]
-})
+}

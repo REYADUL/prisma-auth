@@ -6,7 +6,8 @@ export async function POST(req){
     try{
         const body = await req.json();
         const {email, phone , password} = body;
-        console.log(body.email);
+        const phoneNumber =  Number(phone);
+        console.log(body);
 
         const existinguserByEmail = await db.user.findUnique({
             where: {email: email}
@@ -39,4 +40,16 @@ export async function POST(req){
         return NextResponse.json({message:'it is error'},{status:500});
         
     }
+}
+
+
+export async function GET(req, res) {
+  
+    try {
+      const users = await db.user.findMany();
+      return NextResponse.json(users);
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to fetch users' });
+    }
+
 }
