@@ -1,11 +1,43 @@
-// pages/signup.js
-// import { useState } from 'react';
+'use client';
+import { useState } from 'react';
 import Head from 'next/head';
-
+// import { userAgent } from 'next/server';
+// import { objectEnumValues } from '@prisma/client/runtime/library';
+import { useRouter } from 'next/router'; 
 
 export default function SignUp() {
-    // const [email, setEmail] = useState('');
-    // const [password, setPassword] = useState('');
+    // const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [phone,setPhone] = useState('');
+    const submitForm = async() => {
+      e.preventDefault();
+      const newUser = {
+        email,
+        phone,
+        password
+      }
+      console.log(newUser);
+      try{
+        const response = await fetch('api/user',{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newUser)
+        })
+        if(response.ok){
+          console.log('ok resoponed');
+        }
+        else{
+          console.log('Registration failed');
+        }
+      }
+      catch(error){
+        console.error('Error registering user:', error);
+      }
+      
+    }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Head>
@@ -23,7 +55,7 @@ export default function SignUp() {
             </a>
           </p>
         </div>
-        <form className="mt-8 space-y-6" action="#" method="POST">
+        <form className="mt-8 space-y-6" onSubmit={submitForm} method="POST">
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email-address" className="sr-only">
@@ -37,6 +69,24 @@ export default function SignUp() {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="phone" className="sr-only">
+                phone
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type=""
+                autoComplete=""
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
             <div>
@@ -51,24 +101,11 @@ export default function SignUp() {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
-                // value={password}
-                // onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <div>
-              <label htmlFor="confirm-password" className="sr-only">
-                Confirm Password
-              </label>
-              <input
-                id="confirm-password"
-                name="confirm-password"
-                type="password"
-                autoComplete="new-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
-              />
-            </div>
+            
           </div>
 
           <div>
