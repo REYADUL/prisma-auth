@@ -1,11 +1,9 @@
 'use server'
-// import {signIn} from '@/auth';
-
 import { revalidatePath } from "next/cache";
 import { signIn } from "../../../auth";
 
 export async function login(info) {
-    console.log({info});
+    // console.log({info});
     try {
         const res = await signIn("credentials", {
             email: info.email,

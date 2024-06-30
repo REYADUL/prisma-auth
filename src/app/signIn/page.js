@@ -14,19 +14,6 @@ export default function SignIn() {
 
   const handleSubmit = async(e)=>{
     e.preventDefault(); 
-    // const signInData = await signIn('credentials',{
-    //   email: email,
-    //   password: password,
-    //   redirect: false
-    // });
-    // console.log(signInData);
-    // if(signInData?.error){
-    //   console.log(signInData.error);
-    // }
-    // else{
-    //   // router.push('/about');
-    //   console.log('ok');
-    // }
     try {
         const formData = new FormData(e.currentTarget)
         const email = formData.get("email")
@@ -34,15 +21,14 @@ export default function SignIn() {
 
         const response =  await login({ email, password })
         console.log(response);
-        // if (response.error) {
-        //     console.log(error);
-        //     // setLoginError(response.error)
-        // }
-        // else {
-        //     // window.location.reload()
-        //     router.push("/about");
-        // }
-        router.push("/about");
+        if (response.error) {
+            console.log(error);
+            // setLoginError(response.error)
+        }
+        else {
+            // window.location.reload()
+            router.push("/about");
+        }
     } 
     catch (error) 
     {
